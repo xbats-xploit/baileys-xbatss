@@ -130,6 +130,11 @@ export const prepareWAMessageMedia = async (
 		media: (message as any)[mediaType]
 	}
 	delete (uploadData as any)[mediaType]
+    
+    // [XBATS PATCH] Force audio to opus if ptt or forceOpus is true
+    if (mediaType === 'audio' && (uploadData.ptt || (message as any).forceOpus)) {
+        uploadData.mimetype = 'audio/ogg; codecs=opus'
+    }
 	// check if cacheable + generate cache key
 	const cacheableKey =
 		typeof uploadData.media === 'object' &&
@@ -374,10 +379,22 @@ export const generateWAMessageContent = async (
         
         if (hasNativeFlow) {
             interactiveMessage.nativeFlowMessage = {
-                buttons: (message as any).buttons.map((b: any) => ({
-                    name: b.nativeFlowInfo?.name || 'single_select',
-                    buttonParamsJson: b.nativeFlowInfo?.paramsJson || b.nativeFlowInfo?.buttonParamsJson || ''
-                }))
+                buttons: (message as any).buttons.map((b: any) => {
+                    if (b.type === 4 || b.nativeFlowInfo) {
+                        return {
+                            name: b.nativeFlowInfo?.name || 'single_select',
+                            buttonParamsJson: b.nativeFlowInfo?.paramsJson || b.nativeFlowInfo?.buttonParamsJson || ''
+                        }
+                    } else {
+                        return {
+                            name: 'quick_reply',
+                            buttonParamsJson: JSON.stringify({
+                                display_text: b.buttonText?.displayText || 'Pilih',
+                                id: b.buttonId || ''
+                            })
+                        }
+                    }
+                })
             }
         } else {
             interactiveMessage.nativeFlowMessage = {

@@ -849,6 +849,15 @@ export const makeMessagesSocket = (config: SocketConfig) => {
 						}
 					} as BinaryNode)
 				}
+                // [XBATS PATCH] AI Label support
+                if ('ai' in content && !!(content as any).ai) {
+                    additionalNodes.push({
+                        tag: 'bot',
+                        attrs: {
+                            biz_bot: '1'
+                        }
+                    } as BinaryNode)
+                }
 
 				if ('cachedGroupMetadata' in options) {
 					console.warn(
