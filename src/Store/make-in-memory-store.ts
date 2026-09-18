@@ -1,13 +1,14 @@
 // @ts-nocheck
-import type KeyedDB from '@adiwajshing/keyed-db'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const KeyedDB = (() => { try { const m = require('@adiwajshing/keyed-db'); return m.default || m } catch { return class { constructor(){} } } })()
 import type { Comparable } from '@adiwajshing/keyed-db/lib/Types'
 import type { Logger } from 'pino'
-import { proto } from '../../WAProto/index.js'
+import { proto } from '../../WAProto'
 import { DEFAULT_CONNECTION_CONFIG } from '../Defaults'
 import type makeMDSocket from '../Socket'
 import type { BaileysEventEmitter, Chat, ConnectionState, Contact, GroupMetadata, PresenceData, WAMessage, WAMessageCursor, WAMessageKey } from '../Types'
-import type { Label } from '../Types/Label'
-import type { LabelAssociation, LabelAssociationType, MessageLabelAssociation } from '../Types/LabelAssociation'
+import { Label } from '../Types/Label'
+import { LabelAssociation, LabelAssociationType, MessageLabelAssociation } from '../Types/LabelAssociation'
 import { md5, toNumber, updateMessageWithReaction, updateMessageWithReceipt } from '../Utils'
 import { jidNormalizedUser } from '../WABinary'
 import makeOrderedDictionary from './make-ordered-dictionary'

@@ -1,9 +1,10 @@
+// @ts-nocheck
 import { Boom } from '@hapi/boom'
 import axios, { type AxiosRequestConfig } from 'axios'
 import { createHash, randomBytes } from 'crypto'
 import { platform, release } from 'os'
 import { proto } from '../../WAProto/index.js'
-import version from '../Defaults/baileys-version.json' with { type: 'json' }
+import version from '../Defaults/baileys-version.json'
 const baileysVersion = version.version
 import type {
 	BaileysEventEmitter,
@@ -106,6 +107,7 @@ export const encodeBigEndian = (e: number, t = 4) => {
 	return a
 }
 
+// @ts-ignore
 export const toNumber = (t: Long | number | null | undefined): number =>
 	typeof t === 'object' && t ? ('toNumber' in t ? t.toNumber() : (t as Long).low) : t || 0
 

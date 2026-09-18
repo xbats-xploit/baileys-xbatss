@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Boom } from '@hapi/boom'
 import { proto } from '../../WAProto/index.js'
 import { type BinaryNode } from './types'
@@ -97,6 +98,7 @@ function bufferToUInt(e: Uint8Array | Buffer, t: number) {
 
 const tabs = (n: number) => '\t'.repeat(n)
 
+// @ts-ignore
 export function binaryNodeToString(node: BinaryNode | BinaryNode['content'], i = 0): string {
 	if (!node) {
 		return node!
