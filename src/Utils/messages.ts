@@ -131,9 +131,17 @@ export const prepareWAMessageMedia = async (
 	}
 	delete (uploadData as any)[mediaType]
     
-    // [XBATS PATCH] Force audio to opus if ptt or forceOpus is true
-    if (mediaType === 'audio' && (uploadData.ptt || (message as any).forceOpus)) {
-        uploadData.mimetype = 'audio/ogg; codecs=opus'
+    // [XBATS PATCH] Convert to Opus and force mimetype ONLY if successful
+    let isPtt = uploadData.ptt || (message as any).forceOpus || false;
+    if (mediaType === 'audio' && isPtt) {
+        try {
+            const { stream } = await getStream(uploadData.media);
+            const buffer = await toBuffer(stream);
+            uploadData.media = await convertToOpusBuffer(buffer);
+            uploadData.mimetype = 'audio/ogg; codecs=opus';
+        } catch (err) {
+            logger?.warn({ err }, 'Failed to convert to opus, sending original');
+        }
     }
 	// check if cacheable + generate cache key
 	const cacheableKey =

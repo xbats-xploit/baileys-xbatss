@@ -404,21 +404,8 @@ export const encryptedStream = async (
 	mediaType: MediaType,
 	{ logger, saveOriginalFileIfRequired, opts }: EncryptedStreamOptions = {}
 ) => {
-	let isPtt = (opts as any)?.ptt || (media as any)?.ptt || false;
-	let forceOpus = (opts as any)?.forceOpus || (media as any)?.forceOpus || false;
 	const { stream, type } = await getStream(media, opts)
     let finalStream = stream
-    if (mediaType === 'audio' && (isPtt || forceOpus)) {
-        try {
-            const buffer = await toBuffer(stream)
-            const opusBuffer = await convertToOpusBuffer(buffer)
-            finalStream = toReadable(opusBuffer)
-        } catch (err) {
-            logger?.warn({ err }, 'Failed to convert to opus')
-            const fallback = await getStream(media, opts)
-            finalStream = fallback.stream
-        }
-    }
 
 
 	logger?.debug('fetched media stream')
